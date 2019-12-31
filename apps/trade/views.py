@@ -121,6 +121,7 @@ class AlipayView(APIView):
         # 1. 获取GET中参数
         for key, value in request.GET.items():
             processed_dict[key] = value
+        print(request.GET.items)
         # 2. 取出sign
         sign = processed_dict.pop("sign", None)
 
@@ -137,24 +138,27 @@ class AlipayView(APIView):
         verify_re = alipay.verify(processed_dict, sign)
 
         # 这里可以不做操作。因为不管发不发return url。notify url都会修改订单状态。
+        print(verify_re)
         if verify_re is True:
             order_sn = processed_dict.get('out_trade_no', None)
             trade_no = processed_dict.get('trade_no', None)
-            trade_status = processed_dict.get('trade_status', None)
-
+            # trade_status = processed_dict.get('trade_status')
+            # print(trade_status)
             existed_orders = OrderInfo.objects.filter(order_sn=order_sn)
             for existed_order in existed_orders:
-                existed_order.pay_status = trade_status
+                existed_order.pay_status = 'TRADE_SUCCESS'
                 existed_order.trade_no = trade_no
                 existed_order.pay_time = datetime.now()
+
                 existed_order.save()
 
-            response = redirect("http://localhost:8080/#/app/home/index")
+            response = redirect("/index")
             return response
 
         else:
-            response = redirect("http://localhost:8080/#/app/home/index")
+            response = redirect("/index")
             return response
+
 
     def post(self, request):
         """
@@ -180,7 +184,8 @@ class AlipayView(APIView):
 
         #进行验证
         verify_re = alipay.verify(processed_dict, sign)
-
+        print(verify_re)
+        print(11111111111111111111111111111111)
         # 如果验签成功
         if verify_re is True:
             #商户网站唯一订单号

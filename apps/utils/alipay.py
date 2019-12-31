@@ -121,11 +121,13 @@ class AliPay(object):
         return False
 
     def verify(self, data, signature):
+        print(data)
         if "sign_type" in data:
             sign_type = data.pop("sign_type")
         # 排序后的字符串
         unsigned_items = self.ordered_data(data)
         message = "&".join(u"{}={}".format(k, v) for k, v in unsigned_items)
+        print(message)
         return self._verify(message, signature)
 
 
@@ -161,9 +163,9 @@ if __name__ == "__main__":
         # 订单标题
         subject="测试订单derek",
         # 我们商户自行生成的订单号
-        out_trade_no="20180417derek2",
+        out_trade_no="20280417aerek2",
         # 订单金额
-        total_amount=100,
+        total_amount=300,
         #成功付款后跳转到的页面，return_url同步的url
         return_url="http://127.0.0.1:8000/alipay/return/"
     )

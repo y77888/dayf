@@ -51,19 +51,25 @@ INSTALLED_APPS = [
     'django_filters',
     'coreschema',
     'rest_framework.authtoken',
+    'social_django',
+
 
 
 ]
+
+
+
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'DisableCSRFCheck.DisableCSRFCheck'
 ]
 CORS_ORIGIN_ALLOW_ALL = True
 
@@ -81,6 +87,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -157,17 +165,21 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication'
     ),
     # #限速设置
-    # 'DEFAULT_THROTTLE_CLASSES': (
-    #         'rest_framework.throttling.AnonRateThrottle',   #未登陆用户
-    #         'rest_framework.throttling.UserRateThrottle'    #登陆用户
-    #     ),
-    # 'DEFAULT_THROTTLE_RATES': {
-    #     'anon': '20/minute',                   #每分钟可以请求两次
-    #     'user': '40/minute'                    #每分钟可以请求五次
-    # }
+    'DEFAULT_THROTTLE_CLASSES': (
+            'rest_framework.throttling.AnonRateThrottle',   #未登陆用户
+            'rest_framework.throttling.UserRateThrottle'    #登陆用户
+        ),
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '20/minute',                   #每分钟可以请求两次
+        'user': '40/minute'                    #每分钟可以请求五次
+    }
 }
 AUTHENTICATION_BACKENDS = (
     'users.views.CustomBackend',
+    'social_core.backends.weibo.WeiboOAuth2',
+    'social_core.backends.qq.QQOAuth2',
+    'social_core.backends.weixin.WeixinOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
 
 )
 
@@ -199,3 +211,9 @@ CACHES = {
         }
     }
 }
+
+
+SOCIAL_AUTH_WEIBO_KEY = '2623545338'
+SOCIAL_AUTH_WEIBO_SECRET = '54e9be29b7d36aed250236c403382050'
+
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/index/'

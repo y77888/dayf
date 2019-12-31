@@ -29,7 +29,7 @@ from rest_framework.documentation import include_docs_urls
 from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken import views
 from rest_framework_jwt.views import obtain_jwt_token
-
+from django.views.generic import TemplateView
 router = DefaultRouter()
 
 
@@ -55,7 +55,9 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     re_path('^', include(router.urls)),
     path('api-token-auth/', views.obtain_auth_token),
-    path('login/', obtain_jwt_token),
+    re_path(r'^login/$', obtain_jwt_token),
     path('alipay/return/', AlipayView.as_view()),
+    path('', include('social_django.urls', namespace='social')),
+    path('index/', TemplateView.as_view(template_name='index.html'),name='index')
 
 ]
